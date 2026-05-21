@@ -1,19 +1,12 @@
 #include "SaveSystem.h"
 #include "../Core/Exceptions.h"
 #include "../Core/Logger.h"
-
-#include "../Characters/Warrior.h"
-#include "../Characters/Mage.h"
-#include "../Characters/Archer.h"
-#include "../Characters/Rogue.h"
-
 #include <fstream>
 
 void SaveSystem::saveGame(const std::string& filename, const Character& player) {
     std::ofstream out(filename);
-    
     if (!out.is_open()) {
-        throw SaveLoadException("Failed to open save file for writing: " + filename);
+        throw SaveLoadException("Critical: Unable to open file for writing serialization data: " + filename);
     }
 
     out << player.getClassName() << "\n";
@@ -24,38 +17,29 @@ void SaveSystem::saveGame(const std::string& filename, const Character& player) 
     out << player.getGold() << "\n";
     out << 0 << "\n"; 
 
-    Logger::getInstance().log("Game progress successfully saved to: " + filename);
+    Logger::getInstance().log("Save state written successfully to target file: " + filename);
 }
 
-std::unique_ptr<Character> SaveSystem::loadGame(const std::string& filename) {
+std::unique_ptr<Character> SaveSystem::loadGame(const std::string& filename, CharacterFactory& factory) {
     std::ifstream in(filename);
-    
     if (!in.is_open()) {
-        throw SaveLoadException("Save file not found or cannot be opened: " + filename);
+        throw SaveLoadException("Critical: Target save state file does not exist: " + filename);
     }
 
     std::string class_name, name;
-    int health, max_health, damage, gold;
+    int health = 0, max_health = 0, damage = 0, gold = 0;
 
     if (!(in >> class_name >> name >> health >> max_health >> damage >> gold)) {
-        throw SaveLoadException("Save file is corrupted or has an invalid format!");
+        throw SaveLoadException("Data stream failure: Save file structure is corrupted!");
     }
-
-    std::unique_ptr<Character> loaded_player = nullptr;
     
-    if (class_name == "Warrior") {
-        loaded_player = std::make_unique<Warrior>(name, max_health, damage, gold);
-    } else if (class_name == "Mage") {
-        loaded_player = std::make_unique<Mage>(name, max_health, damage, gold);
-    } else if (class_name == "Archer") {
-        loaded_player = std::make_unique<Archer>(name, max_health, damage, gold);
-    } else if (class_name == "Rogue") {
-        loaded_player = std::make_unique<Rogue>(name, max_health, damage, gold);
-    } else {
-        throw SaveLoadException("Unknown character class found in save file: " + class_name);
+    auto loaded_player = factory.createCharacter(class_name, name, health, max_health, damage, gold);
+    
+    if (!loaded_player) {
+        throw SaveLoadException("Factory processing failed: Unknown or unregistered character class token: " + class_name);
     }
 
-    int health_to_reduce = max_health - health;
+    auto health_to_reduce = max_health - health;
     if (health_to_reduce > 0) {
         loaded_player->takeDamage(health_to_reduce);
     }
@@ -66,6 +50,6 @@ std::unique_ptr<Character> SaveSystem::loadGame(const std::string& filename) {
         }
     }
 
-    Logger::getInstance().log("Game progress successfully loaded from: " + filename);
+    Logger::getInstance().log("Player session completely reconstructed from save state file.");
     return loaded_player;
 }
