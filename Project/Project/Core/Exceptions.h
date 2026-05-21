@@ -1,12 +1,20 @@
-// Exceptions.h
-// Custom typed exceptions for the project.
-// Needed for project requirement: typed errors and try/catch.
-//
-// Future exception types:
-// - GameException
-// - SaveLoadException
-// - InventoryException
-// - BattleException
-// - ShopException
-//
-// These exceptions should be caught in main() or Game::run().
+#pragma once
+
+#include <stdexcept>
+#include <string>
+
+class GameException : public std::runtime_error {
+public:
+    explicit GameException(const std::string& message) : std::runtime_error(message) {}
+    virtual ~GameException() = default;
+};
+
+class SaveLoadException final : public GameException {
+public:
+    explicit SaveLoadException(const std::string& message) : GameException("Save/Load Subsystem Error: " + message) {}
+};
+
+class InvalidMenuChoiceException final : public GameException {
+public:
+    explicit InvalidMenuChoiceException(const std::string& message) : GameException("UI/Menu Error: " + message) {}
+};
