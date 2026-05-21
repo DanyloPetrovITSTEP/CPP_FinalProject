@@ -13,7 +13,6 @@
 // - start Battle
 // - give rewards after victory
 #pragma once
-
 #include <string>
 
 using namespace std;
