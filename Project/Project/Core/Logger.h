@@ -23,4 +23,4 @@ public:
     const std::vector<std::string>& getHistory() const;
 };
 
-#endif
+#endif 
