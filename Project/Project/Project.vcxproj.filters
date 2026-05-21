@@ -1,0 +1,147 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="Core">
+      <UniqueIdentifier>{dbdc31a9-cd64-4821-b9a7-25a8719b0682}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Characters">
+      <UniqueIdentifier>{657f0a3d-9da2-4583-8ce8-dcff84ad92a6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Items">
+      <UniqueIdentifier>{9572d3dc-0802-4c12-b347-26b3c04469be}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="World">
+      <UniqueIdentifier>{76a4a110-30bb-45a6-a1b3-b856c13bab8e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Combat">
+      <UniqueIdentifier>{07b58740-c902-4687-821a-786e5199e3a2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Save">
+      <UniqueIdentifier>{0f57101a-5d77-4c7c-b918-019252f8cda5}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Source.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Core\Game.cpp">
+      <Filter>Core</Filter>
+    </ClCompile>
+    <ClCompile Include="Core\Logger.cpp">
+      <Filter>Core</Filter>
+    </ClCompile>
+    <ClCompile Include="Characters\Character.cpp">
+      <Filter>Characters</Filter>
+    </ClCompile>
+    <ClCompile Include="Characters\Warrior.cpp">
+      <Filter>Characters</Filter>
+    </ClCompile>
+    <ClCompile Include="Characters\Archer.cpp">
+      <Filter>Characters</Filter>
+    </ClCompile>
+    <ClCompile Include="Characters\Mage.cpp">
+      <Filter>Characters</Filter>
+    </ClCompile>
+    <ClCompile Include="Characters\Rogue.cpp">
+      <Filter>Characters</Filter>
+    </ClCompile>
+    <ClCompile Include="Items\Item.cpp">
+      <Filter>Items</Filter>
+    </ClCompile>
+    <ClCompile Include="Items\Potion.cpp">
+      <Filter>Items</Filter>
+    </ClCompile>
+    <ClCompile Include="Items\Weapon.cpp">
+      <Filter>Items</Filter>
+    </ClCompile>
+    <ClCompile Include="Items\Armor.cpp">
+      <Filter>Items</Filter>
+    </ClCompile>
+    <ClCompile Include="Items\Inventory.cpp">
+      <Filter>Items</Filter>
+    </ClCompile>
+    <ClCompile Include="World\Enemy.cpp">
+      <Filter>World</Filter>
+    </ClCompile>
+    <ClCompile Include="World\Dungeon.cpp">
+      <Filter>World</Filter>
+    </ClCompile>
+    <ClCompile Include="World\Shop.cpp">
+      <Filter>World</Filter>
+    </ClCompile>
+    <ClCompile Include="Combat\Battle.cpp">
+      <Filter>Combat</Filter>
+    </ClCompile>
+    <ClCompile Include="Save\SaveSystem.cpp">
+      <Filter>Save</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Core\Game.h">
+      <Filter>Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\Logger.h">
+      <Filter>Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\Exceptions.h">
+      <Filter>Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Characters\Character.h">
+      <Filter>Characters</Filter>
+    </ClInclude>
+    <ClInclude Include="Characters\Warrior.h">
+      <Filter>Characters</Filter>
+    </ClInclude>
+    <ClInclude Include="Characters\Archer.h">
+      <Filter>Characters</Filter>
+    </ClInclude>
+    <ClInclude Include="Characters\Mage.h">
+      <Filter>Characters</Filter>
+    </ClInclude>
+    <ClInclude Include="Characters\Rogue.h">
+      <Filter>Characters</Filter>
+    </ClInclude>
+    <ClInclude Include="Items\Item.h">
+      <Filter>Items</Filter>
+    </ClInclude>
+    <ClInclude Include="Items\Potion.h">
+      <Filter>Items</Filter>
+    </ClInclude>
+    <ClInclude Include="Items\Weapon.h">
+      <Filter>Items</Filter>
+    </ClInclude>
+    <ClInclude Include="Items\Armor.h">
+      <Filter>Items</Filter>
+    </ClInclude>
+    <ClInclude Include="Items\Inventory.h">
+      <Filter>Items</Filter>
+    </ClInclude>
+    <ClInclude Include="World\Enemy.h">
+      <Filter>World</Filter>
+    </ClInclude>
+    <ClInclude Include="World\Dungeon.h">
+      <Filter>World</Filter>
+    </ClInclude>
+    <ClInclude Include="World\Shop.h">
+      <Filter>World</Filter>
+    </ClInclude>
+    <ClInclude Include="Combat\Battle.h">
+      <Filter>Combat</Filter>
+    </ClInclude>
+    <ClInclude Include="Save\SaveSystem.h">
+      <Filter>Save</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>
