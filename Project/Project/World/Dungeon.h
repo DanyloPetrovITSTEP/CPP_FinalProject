@@ -12,3 +12,20 @@
 // - create enemies for selected level
 // - start Battle
 // - give rewards after victory
+#pragma once
+
+#include <string>
+
+using namespace std;
+
+class Dungeon {
+private:
+    string dungeonName;
+    string bossName;
+    int level;
+
+protected:
+    Dungeon(string dName, string bName, int lvl);
+    void showInfo();
+    void showMenu();
+};
