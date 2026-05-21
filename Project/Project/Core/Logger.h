@@ -1,16 +1,26 @@
-// Logger.h
-// Logging subsystem.
-// Responsible for:
-// - storing text game events
-// - printing event history to console
-// - clearing history if needed
-//
-// Example messages:
-// - "Hero entered the dungeon"
-// - "Hero bought a potion"
-// - "Game saved"
-// - "Warrior attacked Skeleton"
-//
-// Suggested STL containers:
-// - vector<string>
-// - list<string>
+#ifndef LOGGER_H
+#define LOGGER_H
+
+#include <string>
+#include <vector>
+#include <string_view>
+
+class Logger {
+private:
+    std::vector<std::string> m_history;
+
+public:
+    Logger() = default;
+    ~Logger() = default;
+
+    Logger(const Logger&) = delete;
+    Logger& operator=(const Logger&) = delete;
+
+    void log(std::string_view message);
+    void print() const;
+    void clear();
+    
+    const std::vector<std::string>& getHistory() const;
+};
+
+#endif
