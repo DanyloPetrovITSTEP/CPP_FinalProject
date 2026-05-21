@@ -1,16 +1,22 @@
-// SaveSystem.h
-// Save and load system.
-// Responsible for saving player progress to file and loading it later.
-//
-// Data to save:
-// - selected character class
-// - name
-// - health
-// - max health
-// - damage
-// - gold
-// - inventory items
-//
-// Used by:
-// - Continue
-// - Save game
+#ifndef SAVESYSTEM_H
+#define SAVESYSTEM_H
+
+#include <string>
+#include <memory>
+
+class Character;
+
+class SaveSystem {
+private:
+    std::string m_saveFileName;
+
+public:
+    explicit SaveSystem(std::string saveFileName = "save.dat");
+    ~SaveSystem() = default;
+
+    void saveGame(const std::unique_ptr<Character>& player);
+    
+    std::unique_ptr<Character> loadGame();
+};
+
+#endif 
