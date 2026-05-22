@@ -55,4 +55,13 @@ int Enemy::getGold()
 {
 	return gold_;
 }
+void Enemy::updateIsDead()
+{
+    this->is_dead_ = getHealth() <= 0;
+
+    if (is_dead_)
+    {
+        cout << this->ename_ << " has died!" << endl;
+    }
+}
 

@@ -25,6 +25,7 @@ private:
     int maxHealth_;
     int damage_;
     int gold_;
+    bool is_dead_;
 
 protected:
     Enemy(const string& name, int maxHealth, int damage, int gold);
@@ -33,4 +34,5 @@ protected:
 	int getMaxHealth();
     int getDamage();
     int getGold();
+	void updateIsDead();
 };
