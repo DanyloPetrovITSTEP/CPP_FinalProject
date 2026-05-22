@@ -20,15 +20,17 @@ using namespace std;
 
 class Enemy {
 private:
-    string enemyName;
-    int health;
-    int damage;
-    int rewardGold;
+    string ename_;
+    int health_;
+    int maxHealth_;
+    int damage_;
+    int gold_;
 
 protected:
-    Enemy(string eName, int hp, int dmg, int gold);
+    Enemy(const string& name, int maxHealth, int damage, int gold);
     string getName();
     int getHealth();
+	int getMaxHealth();
     int getDamage();
-    int getRewardGold();
+    int getGold();
 };

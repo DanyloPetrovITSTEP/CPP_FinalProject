@@ -12,28 +12,47 @@
 
 using namespace std;
 
-Enemy::Enemy(string eName, int hp, int dmg, int gold)
+Enemy::Enemy(const string& name, int maxHealth, int damage, int gold)
 {
-    enemyName = eName;
-    health = hp;
-    damage = dmg;
-    rewardGold = gold;
+    ename_ = name;
+	maxHealth_ = maxHealth;
+	health_ = maxHealth;
+    damage_ = damage;
+    gold_ = gold;
+
+    if (maxHealth_ < 1)
+    {
+        maxHealth_ = 1;
+        health_ = 1;
+	}
+    if (damage_ < 0)
+    {
+        damage_ = 0;
+    }
+    if (gold_ < 0)
+    {
+        gold_ = 0;
+	}
 }
 
 string Enemy::getName()
 {
-	return enemyName;
+	return ename_;
 }
 int Enemy::getHealth()
 {
-	return health;
+	return health_;
+}
+int Enemy::getMaxHealth()
+{
+    return maxHealth_;
 }
 int Enemy::getDamage()
 {
-	return damage;
+	return damage_;
 }
-int Enemy::getRewardGold()
+int Enemy::getGold()
 {
-	return rewardGold;
+	return gold_;
 }
 
