@@ -15,7 +15,6 @@ public:
     ~SaveSystem() = default;
 
     void saveGame(const std::unique_ptr<Character>& player);
-    
     std::unique_ptr<Character> loadGame();
 };
 
