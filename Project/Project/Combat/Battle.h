@@ -1,19 +1,3 @@
-// Battle.h
-// Battle system.
-// Responsible for turn-based combat.
-//
-// Battle menu example:
-// 1. Attack
-// 2. Use item
-// 3. Show stats
-// 4. Surrender
-//
-// Uses:
-// - Character
-// - Enemy
-// - Inventory
-// - Logger
-
 #pragma once
 
 #include "../World/Enemy.h"
@@ -37,7 +21,6 @@ public:
 private:
 	void PlayerAttack();
 	void EnemyAttack();
-	void UseItem();
 	void ShowStats();
 	void RunAway();
 };

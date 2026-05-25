@@ -1,18 +1,11 @@
-// Enemy.cpp
-// Implementation file for Enemy.
-// Future logic:
-// - enemy takes damage
-// - enemy attacks player
-// - enemy gives reward after defeat
-
-
 #include "Enemy.h"
 #include <iostream>'
 #include <string>
 
 using namespace std;
 
-Enemy::Enemy(const string& name, int maxHealth, int damage, int gold)
+Enemy::Enemy(const string& name, int maxHealth, int damage, int gold, Logger& logger)
+	:logger_(logger)
 {
     ename_ = name;
 	maxHealth_ = maxHealth;
@@ -63,6 +56,7 @@ void Enemy::updateIsDead()
     if (is_dead_)
     {
         cout << this->ename_ << " has died!" << endl;
+		logger_.log(this->ename_ + " has died!");
     }
 }
 void Enemy::takeDamage(int value)

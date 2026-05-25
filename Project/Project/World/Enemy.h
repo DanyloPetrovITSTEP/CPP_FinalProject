@@ -1,20 +1,8 @@
 // Enemy.h
 // Base enemy class.
-// Responsible for enemy stats and behavior.
-//
-// Fields:
-// - name
-// - health
-// - damage
-// - reward gold
-//
-// Derived enemy ideas:
-// - Goblin
-// - Skeleton
-// - DungeonBoss
-
 #pragma once
 #include <string>
+#include "../Core/Logger.h"
 
 using namespace std;
 
@@ -26,9 +14,10 @@ private:
     int damage_;
     int gold_;
     bool is_dead_;
+    Logger& logger_;
 
 public:
-    Enemy(const string& name, int maxHealth, int damage, int gold);
+    Enemy(const string& name, int maxHealth, int damage, int gold, Logger& logger);
     string getName() const;
     int getHealth() const;
 	int getMaxHealth() const;
