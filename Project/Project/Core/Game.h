@@ -3,11 +3,9 @@
 
 #include <memory>
 #include "Logger.h"
-#include "SaveSystem.h"
+#include "../Save/SaveSystem.h"
 
 class Character; 
-class Shop;
-class Dungeon;
 
 class Game {
 private:
@@ -18,7 +16,6 @@ private:
 
     void showMainMenu();
     void showGameMenu();
-    
     void startNewGame();
     void continueGame();
     void selectCharacterClass();
