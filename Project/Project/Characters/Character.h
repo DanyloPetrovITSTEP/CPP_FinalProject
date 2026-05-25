@@ -31,7 +31,7 @@ protected:
 	void setDamage(int damage);
 	void setFirstAbilityCooldown(int cooldown);
 	void setSecondAbilityCooldown(int cooldown);
-	void setOtherAbilityCooldown(int cooldown);
+	void setOtherAbilityCooldown(bool one_ability_was_used);
 
 public:
 	Character(const string& name, int maxHealth, int damage, int gold);
@@ -59,7 +59,7 @@ public:
 	void takeDamage(int value);
 	void heal(int value);
 	void addGold(int value);
-	void spendGold(int value);
+	bool spendGold(int value);
 
 	// Status effects are used by some abilities
 	void applyBurn(int damage, int rounds);
