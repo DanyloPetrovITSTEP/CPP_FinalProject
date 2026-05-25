@@ -71,7 +71,7 @@ public:
 	virtual string getClassName() const = 0;
 	
 	// Names are used in battle menu
-	virtual string getBacisAttackName() const = 0;
+	virtual string getBasicAttackName() const = 0;
 	virtual string getSecondActionName() const = 0;
 	virtual string getFirstAbilityName() const = 0;
 	virtual string getSecondAbilityName() const = 0;
