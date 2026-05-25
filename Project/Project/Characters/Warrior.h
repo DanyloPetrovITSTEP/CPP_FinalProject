@@ -1,14 +1,13 @@
-// Warrior.h
-// Warrior character class.
-// Starting idea:
-// - high health
-// - medium damage
-// - simple strong attack
-//
-// Example starting stats:
-// - 100 HP
-// - 10 damage
-//
-// Overrides:
-// - getClassName()
-// - specialAction()
+﻿#pragma once
+
+#include "Character.h"
+
+class Warrior : public Character
+{
+public:
+
+	Warrior(const string& name);
+
+	string getClassName() const override;
+	void specialAbility(Character& target) override;
+};
