@@ -1,36 +1,27 @@
 #include "SaveSystem.h"
-#include "Exceptions.h"
+#include "../Core/Exceptions.h" 
 #include <fstream>
-#include <iostream>
-
-class Character {
-public:
-    virtual ~Character() = default;
-};
 
 SaveSystem::SaveSystem(std::string saveFileName) 
     : m_saveFileName(std::move(saveFileName)) {}
 
 void SaveSystem::saveGame(const std::unique_ptr<Character>& player) {
     if (!player) {
-        throw SaveLoadException("Cannot save a non-existing character!");
+        throw SaveLoadException("Cannot save state: Player instance is null.");
     }
 
     std::ofstream outFile(m_saveFileName, std::ios::binary);
     if (!outFile) {
-        throw SaveLoadException("Failed to open file for saving: " + m_saveFileName);
+        throw SaveLoadException("Critical I/O error: Unable to open " + m_saveFileName + " for writing.");
     }
     
-    std::cout << "Game successfully saved to " << m_saveFileName << "\n";
 }
 
 std::unique_ptr<Character> SaveSystem::loadGame() {
     std::ifstream inFile(m_saveFileName, std::ios::binary);
     if (!inFile) {
-        throw SaveLoadException("Failed to open save file: " + m_saveFileName);
+        throw SaveLoadException("Resource missing: Save file " + m_saveFileName + " could not be found.");
     }
-    
-    std::cout << "Game successfully loaded from " << m_saveFileName << "\n";
-    
-    return std::make_unique<Character>();
+
+    return nullptr; 
 }
