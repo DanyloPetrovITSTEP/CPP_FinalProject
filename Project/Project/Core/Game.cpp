@@ -5,7 +5,7 @@
 Game::Game() : m_isRunning(true), m_player(nullptr), m_saveSystem("save.dat") {}
 
 void Game::run() {
-    m_logger.log("Game engine initialized.");
+    m_logger.log("Game engine started.");
     while (m_isRunning) {
         if (!m_player) {
             showMainMenu();
@@ -16,13 +16,7 @@ void Game::run() {
 }
 
 void Game::showMainMenu() {
-    std::cout << "\n=== RPG GAME MAIN MENU ===\n"
-              << "1. Start New Game\n"
-              << "2. Continue Game (Load)\n"
-              << "3. View Log History\n"
-              << "4. Exit\n"
-              << "Choose option: ";
-              
+    std::cout << "\n1. New Game\n2. Continue\n3. View Logs\n4. Exit\nChoice: ";
     int choice;
     if (!(std::cin >> choice)) {
         std::cin.clear();
@@ -34,21 +28,13 @@ void Game::showMainMenu() {
         case 1: startNewGame(); break;
         case 2: continueGame(); break;
         case 3: m_logger.print(); break;
-        case 4: m_isRunning = false; m_logger.log("Game exited by user."); break;
-        default: std::cout << "Invalid choice! Try again.\n";
+        case 4: m_isRunning = false; break;
+        default: std::cout << "Invalid choice.\n";
     }
 }
 
 void Game::showGameMenu() {
-    std::cout << "\n=== ADVENTURE MENU ===\n"
-              << "1. Enter Dungeon (Battle)\n"
-              << "2. Visit Town Shop\n"
-              << "3. Rest at Home (Heal)\n"
-              << "4. Save Game\n"
-              << "5. View Log History\n"
-              << "6. Return to Main Menu\n"
-              << "Choose action: ";
-
+    std::cout << "\n1. Dungeon\n2. Shop\n3. Rest\n4. Save\n5. Exit\nChoice: ";
     int choice;
     if (!(std::cin >> choice)) {
         std::cin.clear();
@@ -62,64 +48,52 @@ void Game::showGameMenu() {
             case 2: goToShop(); break;
             case 3: restAtHome(); break;
             case 4: saveGame(); break;
-            case 5: m_logger.print(); break;
-            case 6: m_player.reset(); m_logger.log("Returned to main menu."); break;
-            default: std::cout << "Invalid choice! Try again.\n";
+            case 5: m_player.reset(); break;
+            default: std::cout << "Invalid action.\n";
         }
     } 
+    catch (const InventoryException& ex) {
+        std::cout << "\n[Inventory Management Alert]: " << ex.what() << "\n";
+        m_logger.log(std::string("Inventory rejection: ") + ex.what());
+    } 
+    catch (const ShopException& ex) {
+        std::cout << "\n[Merchant Transaction Refused]: " << ex.what() << "\n";
+        m_logger.log(std::string("Shop rejection: ") + ex.what());
+    } 
     catch (const GameException& ex) {
-        std::cerr << "\n[!] Game error caught: " << ex.what() << "\n";
-        m_logger.log(std::string("Error occurred: ") + ex.what());
+        std::cerr << "\n[Subsystem Exception]: " << ex.what() << "\n";
+        m_logger.log(std::string("Game state warning: ") + ex.what());
     }
 }
 
 void Game::startNewGame() {
-    m_logger.log("Starting a new game creation.");
     selectCharacterClass();
 }
 
 void Game::continueGame() {
     try {
         m_player = m_saveSystem.loadGame();
-        m_logger.log("Game loaded successfully.");
-    } 
-    catch (const SaveLoadException& ex) {
-        std::cerr << "\n[!] Load failed: " << ex.what() << "\n";
-        m_logger.log("Failed to load game file.");
+    } catch (const SaveLoadException& ex) {
+        std::cout << "\n[Load Error]: Failed to recover save file. " << ex.what() << "\n";
     }
 }
 
 void Game::selectCharacterClass() {
-    std::cout << "\n--- SELECT YOUR CLASS ---\n"
-              << "1. Warrior\n"
-              << "2. Archer\n"
-              << "3. Mage\n"
-              << "4. Rogue\n"
-              << "Choose class: ";
-              
-    int classChoice;
-    std::cin >> classChoice;
-    m_player = std::make_unique<Character>(); 
-    
-    m_logger.log("New character successfully created.");
+    m_logger.log("Character class selected.");
 }
 
 void Game::goToDungeon() {
-    m_logger.log("Hero entered the dungeon.");
-    std::cout << "\n[Dungeon] You enter dark corridors... (Evgeniy's logic trigger)\n";
+    m_logger.log("Entering Dungeon Subsystem.");
 }
 
 void Game::goToShop() {
-    m_logger.log("Hero entered the shop.");
-    std::cout << "\n[Shop] Welcome to the merchant counter! (Yaroslav's logic trigger)\n";
+    m_logger.log("Entering Shop Subsystem.");
 }
 
 void Game::restAtHome() {
-    m_logger.log("Hero rested at home.");
-    std::cout << "\n[Home] You take a rest and restore your strength.\n";
+    m_logger.log("Player rested.");
 }
 
 void Game::saveGame() {
     m_saveSystem.saveGame(m_player);
-    m_logger.log("Game progress saved.");
 }
