@@ -33,25 +33,26 @@ Enemy::Enemy(const string& name, int maxHealth, int damage, int gold)
     {
         gold_ = 0;
 	}
+    updateIsDead();
 }
 
-string Enemy::getName()
+string Enemy::getName() const
 {
 	return ename_;
 }
-int Enemy::getHealth()
+int Enemy::getHealth()  const
 {
 	return health_;
 }
-int Enemy::getMaxHealth()
+int Enemy::getMaxHealth()   const
 {
     return maxHealth_;
 }
-int Enemy::getDamage()
+int Enemy::getDamage()  const
 {
 	return damage_;
 }
-int Enemy::getGold()
+int Enemy::getGold()    const
 {
 	return gold_;
 }
@@ -63,5 +64,16 @@ void Enemy::updateIsDead()
     {
         cout << this->ename_ << " has died!" << endl;
     }
+}
+void Enemy::takeDamage(int value)
+{
+    if (value < 0)
+        return;
+
+    health_ -= value;
+
+    if (health_ < 0)
+        health_ = 0;
+    updateIsDead();
 }
 

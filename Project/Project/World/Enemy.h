@@ -27,12 +27,13 @@ private:
     int gold_;
     bool is_dead_;
 
-protected:
+public:
     Enemy(const string& name, int maxHealth, int damage, int gold);
-    string getName();
-    int getHealth();
-	int getMaxHealth();
-    int getDamage();
-    int getGold();
+    string getName() const;
+    int getHealth() const;
+	int getMaxHealth() const;
+    int getDamage() const;
+    int getGold() const;
 	void updateIsDead();
+    void takeDamage(int value);
 };

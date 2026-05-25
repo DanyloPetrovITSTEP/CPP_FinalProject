@@ -23,7 +23,7 @@ private:
     string bossName;
     int level;
 
-protected:
+public:
     Dungeon(string dName, string bName, int lvl);
     void showInfo();
     void showMenu();
