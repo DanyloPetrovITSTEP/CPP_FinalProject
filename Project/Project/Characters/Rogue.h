@@ -1,14 +1,24 @@
-// Rogue.h
-// Rogue character class.
-// Starting idea:
-// - medium-low health
-// - medium damage
-// - stealth or critical attack chance
-//
-// Example starting stats:
-// - 75 HP
-// - 14 damage
-//
-// Overrides:
-// - getClassName()
-// - specialAction()
+﻿#pragma once
+
+#include "Character.h"
+
+class Rogue : public Character
+{
+private:
+    int guaranteed_stealth_hits_;
+
+public:
+    Rogue(const string& name);
+
+    string getClassName() const override;
+
+    string getBasicAttackName() const override;
+    string getSecondActionName() const override;
+    string getFirstAbilityName() const override;
+    string getSecondAbilityName() const override;
+
+    bool basicAttack(Character& target) override;
+    bool secondAction(Character& target) override;
+    bool firstAbility(Character& target, vector<Character*>& enemies) override;
+    bool secondAbility(Character& target, vector<Character*>& enemies) override;
+};
