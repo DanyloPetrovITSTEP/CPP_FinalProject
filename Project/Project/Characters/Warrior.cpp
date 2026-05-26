@@ -70,7 +70,7 @@ bool Warrior::firstAbility(Character& target, vector<Character*>& enemies)
 
 bool Warrior::secondAbility(Character& target, vector<Character*>& enemies)
 {
-	if (!canUseFirstAbility())
+	if (!canUseSecondAbility())
 	{
 		return false;
 	}
@@ -78,7 +78,7 @@ bool Warrior::secondAbility(Character& target, vector<Character*>& enemies)
 	target.takeDamage(25);
 
 	setSecondAbilityCooldown(6);
-	setOtherAbilityCooldown(true);
+	setOtherAbilityCooldown(false);
 
 	return true;
 }

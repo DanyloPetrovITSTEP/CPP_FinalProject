@@ -31,10 +31,10 @@ protected:
 	void setDamage(int damage);
 	void setFirstAbilityCooldown(int cooldown);
 	void setSecondAbilityCooldown(int cooldown);
-	void setOtherAbilityCooldown(bool one_ability_was_used);
+	void setOtherAbilityCooldown(bool first_ability_was_used);
 
 public:
-	Character(const string& name, int maxHealth, int damage, int gold);
+	Character(const string& name, int max_health, int damage, int gold);
 
 	virtual ~Character() = default;
 

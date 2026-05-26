@@ -63,7 +63,7 @@ bool Archer::firstAbility(Character& target, vector<Character*>& enemies)
 
 bool Archer::secondAbility(Character& target, vector<Character*>& enemies)
 {
-	if (!canUseFirstAbility())
+	if (!canUseSecondAbility())
 	{
 		return false;
 	}
@@ -71,7 +71,7 @@ bool Archer::secondAbility(Character& target, vector<Character*>& enemies)
 	target.takeDamage(getDamage() * 3);
 
 	setSecondAbilityCooldown(6);
-	setOtherAbilityCooldown(true);
+	setOtherAbilityCooldown(false);
 
 	return true;
 }

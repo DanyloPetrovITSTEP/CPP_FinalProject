@@ -220,10 +220,10 @@ void Character::setSecondAbilityCooldown(int cooldown)
     second_ability_cooldown_ = cooldown;
 }
 
-void Character::setOtherAbilityCooldown(bool one_ability_was_used)
+void Character::setOtherAbilityCooldown(bool first_ability_was_used)
 {
-    // After using one ability, the second one gets a small cooldown
-    if (one_ability_was_used)
+    // After using one ability, the opposite one gets a small cooldown
+    if (first_ability_was_used)
     {
         if (second_ability_cooldown_ < 2)
         {

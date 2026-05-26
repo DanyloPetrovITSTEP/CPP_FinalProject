@@ -5,6 +5,7 @@
 class Rogue : public Character
 {
 private:
+    // Makes stealth hits guranteed for a few attacks
     int guaranteed_stealth_hits_;
 
 public:

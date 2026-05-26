@@ -1,4 +1,5 @@
 ﻿#include "Rogue.h"
+#include <cstdlib>
 
 Rogue::Rogue(const string& name) : Character(name, 75, 14, 50), guaranteed_stealth_hits_(0) {}
 
@@ -35,15 +36,26 @@ bool Rogue::basicAttack(Character& target)
 
 bool Rogue::secondAction(Character& target)
 {
+	// Master Of Stealth ability guarantees stealth hits success
 	if (guaranteed_stealth_hits_ > 0)
 	{
 		target.takeDamage(getDamage() * 2);
 		guaranteed_stealth_hits_--;
+		return true;
 	}
-	else
+
+	// Without Master Of Stealth, stealth attack has 50% success chance
+	bool was_noticed = rand() % 2 == 0;
+
+	if (was_noticed)
 	{
 		target.takeDamage(getDamage());
 	}
+	else
+	{
+		target.takeDamage(getDamage() * 2);
+	}
+
 	return true;
 }
 
@@ -54,6 +66,7 @@ bool Rogue::firstAbility(Character& target, vector<Character*>& enemies)
 		return false;
 	}
 
+	// Next two stealth attacks will always be strong
 	guaranteed_stealth_hits_ = 2;
 
 	setFirstAbilityCooldown(4);
@@ -74,6 +87,7 @@ bool Rogue::secondAbility(Character& target, vector<Character*>& enemies)
 		return false;
 	}
 
+	// Rogue steals 10% of enemy current health
 	int stolen_health = target.getHealth() / 10;
 
 	if (stolen_health < 1)
