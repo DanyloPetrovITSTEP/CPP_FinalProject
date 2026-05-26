@@ -19,7 +19,6 @@ private:
     void startNewGame();
     void continueGame();
     void selectCharacterClass();
-    
     void goToDungeon();
     void goToShop();
     void restAtHome();
