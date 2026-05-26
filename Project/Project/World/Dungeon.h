@@ -1,14 +1,19 @@
-// Dungeon.h
-// Dungeon system.
-// Responsible for dungeon level selection.
-//
-// Menu example:
-// 1. Easy dungeon
-// 2. Medium dungeon
-// 3. Hard dungeon
-// 4. Back
-//
-// Future logic:
-// - create enemies for selected level
-// - start Battle
-// - give rewards after victory
+#pragma once
+#include <string>
+#include "../Core/Logger.h"
+#include "Enemy.h"
+
+class Dungeon {
+private:
+    string dungeonName;
+    Enemy boss1_;
+    Enemy boss2_;
+    int level;
+    Logger& logger_;
+
+public:
+    Dungeon(string dName, string bName, int lvl, Logger& logger);
+    Dungeon(string dName, string b1Name, string b2Name, int lvl, Logger& logger);
+    void showInfo();
+    void showMenu();
+};
