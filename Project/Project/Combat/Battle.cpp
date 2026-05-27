@@ -3,47 +3,149 @@
 
 using namespace std;
 
-Battle::Battle(Character& player, Enemy& enemy, Inventory& inventory, Logger& logger): player_(player), enemy_(enemy), inventory_(inventory), logger_(logger)
+Battle::Battle(Character& player, vector<Character*>& enemies, Inventory& inventory, Logger& logger)
+    : player_(player), enemies_(enemies), inventory_(inventory), logger_(logger)
 {
 }
-void Battle::PlayerAttack()
+void Battle::EnemyTurn()
 {
-    int damage = player_.getDamage();
-    enemy_.takeDamage(damage);
-    cout << "Player attacks enemy for " << damage << " damage!"<< endl;
-	logger_.log(player_.getName() + " attacked " + enemy_.getName() + " for " + to_string(damage) + " damage.");
+    if (IsBattleOver())
+        return;
+
+    cout << "\nEnemy turn!\n";
+
+    for (Character* enemy : enemies_)
+    {
+        if (!enemy->isAlive())
+            continue;
+
+        enemy->basicAttack(player_);
+        cout << enemy->getName() << " attacked player !\n";
+        logger_.log(enemy->getName() + " attacked " + player_.getName() + "!");
+    }
 }
-void Battle::EnemyAttack()
+void Battle::ShowEnemies()
 {
-    int damage = enemy_.getDamage();
-    player_.takeDamage(damage);
-    cout << "Enemy attacks player for " << damage << " damage!" << endl;
-	logger_.log(enemy_.getName() + " attacked " + player_.getName() + " for " + to_string(damage) + " damage.");
+    cout << "\n----- ENEMIES -----\n";
+    for (int i = 0; i < enemies_.size(); i++)
+    {
+        if (enemies_[i]->isAlive())
+            cout << i + 1 << ". " << enemies_[i]->getName() << " HP: " << enemies_[i]->getHealth() << endl;
+        else
+            cout << i + 1 << ". " << enemies_[i]->getName() << " (Defeated)" << endl;
+    }
 }
 void Battle::ShowStats()
 {
     cout << "\n----- STATS -----" << endl;
     cout << "Player HP: " << player_.getHealth() << endl;
-    cout << "Enemy HP: " << enemy_.getHealth() << endl;
+    for (Character* enemy : enemies_)
+    {
+        if (enemy->isAlive())
+            cout << enemy->getName() << " HP: " << enemy->getHealth() << endl;
+        else
+            cout << enemy->getName() << " (Defeated)" << endl;
+    }
 }
-void Battle::RunAway()
+void Battle::ProcessPlayerAction(function<void(Character&)> action)
 {
-	cout << "You ran away from the battle!" << endl;
-	logger_.log(player_.getName() + " ran away from " + enemy_.getName() + "!"); 
+    Character* target = nullptr;
+    while (!target)
+    {
+        target = ChooseTarget();
+        if (!target)
+            cout << "Try again!\n";
+    }
+    action(*target);
+
+    if (IsBattleOver())
+        return;
+
+    EnemyTurn();
+
+    IsBattleOver();
+}
+bool Battle::IsBattleOver()
+{
+    bool enemiesAlive = false;
+    for (Character* e : enemies_)
+    {
+        if (e->isAlive())
+        {
+            enemiesAlive = true;
+            break;
+        }
+    }
+    if (!player_.isAlive())
+    {
+        cout << "You lost!\n";
+        logger_.log(player_.getName() + " lost the battle.");
+        return true;
+    }
+
+    if (!enemiesAlive)
+    {
+        cout << "You won the battle!\n";
+        logger_.log(player_.getName() + " won the battle!");
+        return true;
+    }
+    return false;
+}
+
+Character* Battle::ChooseTarget()
+{
+    if (enemies_.size() > 1)
+    {
+        ShowEnemies();
+
+        int choice;
+        cout << "Choose target: ";
+        cin >> choice;
+
+        if (choice < 1 || choice > enemies_.size())
+        {
+            cout << "Invalid choice!\n";
+            logger_.log(player_.getName() + " made an invalid target choice during battle.");
+            return nullptr;
+        }
+
+        Character* target = enemies_[choice - 1];
+
+        if (!target->isAlive())
+        {
+            cout << "This enemy is already defeated!\n";
+            logger_.log(player_.getName() + " chose an already defeated enemy as a target during battle.");
+            return nullptr;
+        }
+
+        return target;
+    }
+    else
+    {
+        Character* target = enemies_[0];
+        if (!target->isAlive())
+        {
+            cout << "This enemy is already defeated!\n";
+            logger_.log(player_.getName() + " chose an already defeated enemy as a target during battle.");
+            return nullptr;
+        }
+        return target;
+    }
 }
 
 
 
 void Battle::StartBattle()
 {
-    bool battleRunning = true;
-    while (battleRunning)
+    while (!IsBattleOver())
     {
         cout << "\n----- BATTLE -----" << endl;
-        cout << "1. Attack" << endl;
-        cout << "2. Use item" << endl;
-        cout << "3. Show stats" << endl;
-        cout << "4. Run away" << endl;
+        cout << "1. " << player_.getBasicAttackName() << endl;
+        cout << "2. " << player_.getSecondActionName() << endl;
+        cout << "3. " << player_.getFirstAbilityName() << endl;
+        cout << "4. " << player_.getSecondAbilityName() << endl;
+        cout << "5. Use item" << endl;
+        cout << "6. Show stats" << endl;
         cout << "Choose: ";
 
         int choice;
@@ -52,53 +154,87 @@ void Battle::StartBattle()
         switch (choice)
         {
         case 1:
-            PlayerAttack();
-            if (enemy_.getHealth() <= 0)
-            {
-                cout << "Enemy defeated!" << endl;
-                battleRunning = false;
-                break;
-            }
-            EnemyAttack();
-            if (player_.getHealth() <= 0)
-            {
-                cout << "Player died!" << endl;
-                battleRunning = false;
-            }
+        {
+            ProcessPlayerAction([&](Character& enemy)
+                {
+                    player_.basicAttack(enemy);
+                    logger_.log(player_.getName() + " used " + player_.getBasicAttackName() + " on " + enemy.getName() + "!");
+                }
+            );
             break;
+        }
         case 2:
+        {
+            ProcessPlayerAction([&](Character& enemy)
+                {
+                    player_.secondAction(enemy);
+                    logger_.log(player_.getName() + " used " + player_.getSecondActionName() + " on " + enemy.getName() + "!");
+                }
+            );
+            break;
+        }
+        case 3:
+        {
+            ProcessPlayerAction([&](Character& enemy)
+                {
+                    if (player_.firstAbility(enemy, enemies_))
+                        logger_.log(player_.getName() + " used " + player_.getFirstAbilityName() + " on " + enemy.getName() + "!");
+                    else
+                        cout << "Cannot use ability!" << endl;
+                }
+            );
+            break;
+        }
+        case 4:
+        {
+            ProcessPlayerAction([&](Character& enemy)
+                {
+                    if (player_.secondAbility(enemy, enemies_))
+                        logger_.log(player_.getName() + " used " + player_.getSecondAbilityName() + " on " + enemy.getName() + "!");
+                    else
+                        cout << "Cannot use ability!" << endl;
+                }
+            );
+            break;
+        }
+        case 5:
+        {
             cout << "\n----- INVENTORY -----" << endl;
             if (inventory_.isEmpty()) {
-				cout << "Your inventory is empty!" << endl;
+                cout << "Your inventory is empty!" << endl;
                 break;
             }
-			inventory_.showItems();
+            inventory_.showItems();
             int inv_choice;
-			cout << "Choose item to use (0 to cancel): ";
-			cin >> inv_choice;
-			if (inv_choice > 0 && inv_choice <= inventory_.getSize()) {
-				inventory_.useItem(inv_choice - 1);
-				logger_.log(player_.getName() + " used " + inventory_.getItemPtr(inv_choice - 1)->getName() + " during battle.");
-			}
+            cout << "Choose item to use (0 to cancel): ";
+            cin >> inv_choice;
+            if (inv_choice > 0 && inv_choice <= inventory_.getSize()) {
+                inventory_.useItem(inv_choice - 1);
+                logger_.log(player_.getName() + " used " + inventory_.getItemPtr(inv_choice - 1)->getName() + " during battle.");
+            }
 
-			else if (inv_choice != 0) {
+            else if (inv_choice != 0) {
                 cout << "Invalid item choice!" << endl;
                 logger_.log(player_.getName() + " made an invalid item choice during battle.");
             }
 
             else if (inv_choice == 0) {
                 cout << "Cancelled item use." << endl;
-				logger_.log(player_.getName() + " cancelled item use during battle.");
+                logger_.log(player_.getName() + " cancelled item use during battle.");
                 break;
-			}
+            }
+
+            EnemyTurn();
+
             break;
-        case 3:
+        }
+        case 6:
+        {
             ShowStats();
-            break;
-        case 4:
-            RunAway();
-            battleRunning = false;
-            break;
+            if (IsBattleOver())
+                break;
+            continue;
+        }
         default:
             cout << "Invalid choice" << endl;
             break;
