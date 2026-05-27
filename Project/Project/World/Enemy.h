@@ -1,10 +1,11 @@
 #pragma once
 #include <string>
 #include "../Core/Logger.h"
+#include "../Characters/Character.h"
 
-using namespace std;
 
-class Enemy{
+
+class Enemy : public Character {
 private:
     string ename_;
     int health_;
@@ -23,4 +24,22 @@ public:
     int getGold() const;
     void updateIsDead();
     void takeDamage(int value);
+    bool basicAttack(Character& target) override;
+    bool isAlive() const;
+
+
+
+    virtual string getClassName() const override;
+
+    // Names are used in battle menu
+    virtual string getBasicAttackName() const override;
+    virtual string getSecondActionName() const override;
+    virtual string getFirstAbilityName() const override;
+    virtual string getSecondAbilityName() const override;
+
+    // Each class has its own actions and abilities
+    virtual bool basicAttack(Character& target) override;
+    virtual bool secondAction(Character& target) override;
+    virtual bool firstAbility(Character& target, vector<Character*>& enemies) override;
+    virtual bool secondAbility(Character& target, vector<Character*>& enemies) override;
 };

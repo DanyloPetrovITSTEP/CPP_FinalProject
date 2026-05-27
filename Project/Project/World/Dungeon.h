@@ -2,18 +2,21 @@
 #include <string>
 #include "../Core/Logger.h"
 #include "Enemy.h"
+#include "../Characters/Character.h"
+#include "../Items/Inventory.h"
+#include "../Combat/Battle.h"
+
 
 class Dungeon {
 private:
     string dungeonName;
-    Enemy boss1_;
-    Enemy boss2_;
+    vector<Enemy> bosses;
     int level;
-    Logger& logger_;
+    Logger& logger;
 
 public:
-    Dungeon(string dName, string bName, int lvl, Logger& logger);
-    Dungeon(string dName, string b1Name, string b2Name, int lvl, Logger& logger);
+    Dungeon(string dName, vector<Enemy> bosses, int lvl, Logger& logger);
     void showInfo();
-    void showMenu();
+    void showMenu(Character& player, Inventory& inventory);
+    void StartDungeonBattle(Character& player, Inventory& inventory);
 };

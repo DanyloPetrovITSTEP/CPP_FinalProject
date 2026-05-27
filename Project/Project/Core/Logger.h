@@ -11,7 +11,7 @@ public:
     void logError(const std::string& message);
     void print() const;
     void clear() noexcept;
-    
+
     const std::list<std::string>& getHistory() const noexcept;
 
 private:
@@ -20,5 +20,5 @@ private:
     Logger(const Logger&) = delete;
     Logger& operator=(const Logger&) = delete;
 
-    std::list<std::string> history_; 
+    std::list<std::string> history_;
 };

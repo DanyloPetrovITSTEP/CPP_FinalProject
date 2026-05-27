@@ -22,7 +22,7 @@ void Logger::print() const {
         std::cout << "[Log history is completely empty]" << std::endl;
         return;
     }
-    
+
     std::copy(history_.cbegin(), history_.cend(), std::ostream_iterator<std::string>(std::cout, "\n"));
     std::cout << "============================" << std::endl;
 }

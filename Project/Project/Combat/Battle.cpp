@@ -3,7 +3,8 @@
 
 using namespace std;
 
-Battle::Battle(Character& player, vector<Character*>& enemies, Inventory& inventory, Logger& logger) : player_(player), enemies_(enemies), inventory_(inventory), logger_(logger)
+Battle::Battle(Character& player, vector<Character*>& enemies, Inventory& inventory, Logger& logger)
+    : player_(player), enemies_(enemies), inventory_(inventory), logger_(logger)
 {
 }
 void Battle::EnemyTurn()
@@ -19,8 +20,8 @@ void Battle::EnemyTurn()
             continue;
 
         enemy->basicAttack(player_);
-        cout << enemy->getName() << " used " << enemy->getBasicAttackName() << "!\n";
-		logger_.log(enemy->getName() + " used " + enemy->getBasicAttackName() + " on " + player_.getName() + "!");
+        cout << enemy->getName() << " attacked player !\n";
+        logger_.log(enemy->getName() + " attacked " + player_.getName() + "!");
     }
 }
 void Battle::ShowEnemies()
@@ -28,10 +29,10 @@ void Battle::ShowEnemies()
     cout << "\n----- ENEMIES -----\n";
     for (int i = 0; i < enemies_.size(); i++)
     {
-		if (enemies_[i]->isAlive())
+        if (enemies_[i]->isAlive())
             cout << i + 1 << ". " << enemies_[i]->getName() << " HP: " << enemies_[i]->getHealth() << endl;
-		else
-			cout << i + 1 << ". " << enemies_[i]->getName() << " (Defeated)" << endl;
+        else
+            cout << i + 1 << ". " << enemies_[i]->getName() << " (Defeated)" << endl;
     }
 }
 void Battle::ShowStats()
@@ -57,13 +58,12 @@ void Battle::ProcessPlayerAction(function<void(Character&)> action)
     }
     action(*target);
 
-    if (IsBattleOver()) 
+    if (IsBattleOver())
         return;
 
     EnemyTurn();
 
-    if (IsBattleOver()) 
-        return;
+    IsBattleOver();
 }
 bool Battle::IsBattleOver()
 {
@@ -86,7 +86,7 @@ bool Battle::IsBattleOver()
     if (!enemiesAlive)
     {
         cout << "You won the battle!\n";
-		logger_.log(player_.getName() + " won the battle!");
+        logger_.log(player_.getName() + " won the battle!");
         return true;
     }
     return false;
@@ -94,7 +94,7 @@ bool Battle::IsBattleOver()
 
 Character* Battle::ChooseTarget()
 {
-    if(enemies_.size()>1)
+    if (enemies_.size() > 1)
     {
         ShowEnemies();
 
@@ -130,21 +130,15 @@ Character* Battle::ChooseTarget()
             return nullptr;
         }
         return target;
-	}
+    }
 }
 
 
 
 void Battle::StartBattle()
 {
-    bool battleRunning = true;
-
     while (!IsBattleOver())
     {
-        if (IsBattleOver()){
-            break;
-        }
-
         cout << "\n----- BATTLE -----" << endl;
         cout << "1. " << player_.getBasicAttackName() << endl;
         cout << "2. " << player_.getSecondActionName() << endl;
@@ -231,9 +225,6 @@ void Battle::StartBattle()
             }
 
             EnemyTurn();
-
-            if (IsBattleOver())
-                battleRunning = false;
 
             break;
         }
