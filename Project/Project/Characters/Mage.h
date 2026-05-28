@@ -1,14 +1,21 @@
-// Mage.h
-// Mage character class.
-// Starting idea:
-// - low health
-// - high damage
-// - can heal or cast a spell
-//
-// Example starting stats:
-// - 70 HP
-// - 18 damage
-//
-// Overrides:
-// - getClassName()
-// - specialAction()
+﻿#pragma once
+
+#include "Character.h"
+
+class Mage : public Character
+{
+public:
+    Mage(const string& name);
+
+    string getClassName() const override;
+
+    string getBasicAttackName() const override;
+    string getSecondActionName() const override;
+    string getFirstAbilityName() const override;
+    string getSecondAbilityName() const override;
+
+    bool basicAttack(Character& target) override;
+    bool secondAction(Character& target) override;
+    bool firstAbility(Character& target, vector<Character*>& enemies) override;
+    bool secondAbility(Character& target, vector<Character*>& enemies) override;
+};

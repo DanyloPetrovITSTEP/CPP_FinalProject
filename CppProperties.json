@@ -1,0 +1,94 @@
+{
+  "configurations": [
+    {
+      "inheritEnvironments": [
+        "msvc_x86"
+      ],
+      "name": "x86-Debug",
+      "includePath": [
+        "${env.INCLUDE}",
+        "${workspaceRoot}\\**"
+      ],
+      "defines": [
+        "WIN32",
+        "_DEBUG",
+        "UNICODE",
+        "_UNICODE"
+      ],
+      "intelliSenseMode": "windows-msvc-x86"
+    }
+  ]
+}
+#include <iostream>
+#include <vector>
+#include <memory>
+#include <string>
+
+// Базовый класс
+class Item {
+public:
+    std::string name;
+    int price;
+    Item(std::string n, int p) : name(n), price(p) {}
+    virtual ~Item() = default;
+    virtual void use(bool& destroy) = 0;
+    virtual std::unique_ptr<Item> clone() const = 0;
+};
+
+// Оружие / Броня / Зелье
+class Weapon : public Item {
+public:
+    Weapon() : Item("Меч", 100) {}
+    void use(bool& d) override { std::cout << "⚔️ Экипирован Меч\n"; d = false; }
+    std::unique_ptr<Item> clone() const override { return std::make_unique<Weapon>(); }
+};
+
+class Potion : public Item {
+public:
+    Potion() : Item("Зелье ХП", 30) {}
+    void use(bool& d) override { std::cout << "🧪 Выпито Зелье\n"; d = true; }
+    std::unique_ptr<Item> clone() const override { return std::make_unique<Potion>(); }
+};
+
+// Игрок и Магазин
+struct Player {
+    int gold = 150;
+    std::vector<std::unique_ptr<Item>> inv;
+};
+
+class Shop {
+public:
+    std::vector<std::unique_ptr<Item>> items;
+    Shop() { items.push_back(std::make_unique<Weapon>()); items.push_back(std::make_unique<Potion>()); }
+};
+
+int main() {
+    Player p; Shop s; int choice;
+    while (true) {
+        std::cout << "\n💰 Золото: " << p.gold << "\n1. Магазин\n2. Инвентарь\n3. Выход\n>> ";
+        if (!(std::cin >> choice) || choice == 3) break;
+
+        if (choice == 1) {
+            std::cout << "0. Назад\n";
+            for(size_t i=0; i<s.items.size(); ++i) std::cout << i+1 << ". " << s.items[i]->name << " (" << s.items[i]->price << "g)\n";
+            std::cin >> choice;
+            if (choice > 0 && choice <= (int)s.items.size()) {
+                auto& item = s.items[choice-1];
+                if (p.gold >= item->price) {
+                    p.gold -= item->price; p.inv.push_back(item->clone());
+                    std::cout << "✅ Куплено: " << item->name << "\n";
+                } else std::cout << "❌ Недостаточно золота!\n";
+            }
+        } else if (choice == 2) {
+            if (p.inv.empty()) { std::cout << "[Пусто]\n"; continue; }
+            for(size_t i=0; i<p.inv.size(); ++i) std::cout << i+1 << ". " << p.inv[i]->name << "\n";
+            std::cout << "Использовать номер: "; std::cin >> choice;
+            if (choice > 0 && choice <= (int)p.inv.size()) {
+                bool destroy = false;
+                p.inv[choice-1]->use(destroy);
+                if (destroy) p.inv.erase(p.inv.begin() + (choice-1));
+            }
+        }
+    }
+    return 0;
+}
