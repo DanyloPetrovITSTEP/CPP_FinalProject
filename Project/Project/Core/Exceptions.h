@@ -16,17 +16,12 @@ public:
 
 class InventoryException : public GameException {
 public:
-    explicit InventoryException(const std::string& message) : GameException("Inventory Error: " + message) {}
-};
-
-class BattleException : public GameException {
-public:
-    explicit BattleException(const std::string& message) : GameException("Battle Error: " + message) {}
+    explicit InventoryException(const std::string& message) : GameException("Inventory operational error: " + message) {}
 };
 
 class ShopException : public GameException {
 public:
-    explicit ShopException(const std::string& message) : GameException("Shop Error: " + message) {}
+    explicit ShopException(const std::string& message) : GameException("Shop Transaction Error: " + message) {}
 };
 
 #endif 
