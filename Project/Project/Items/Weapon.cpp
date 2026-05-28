@@ -1,4 +1,4 @@
-// Weapon.cpp
+﻿// Weapon.cpp
 // Implementation file for Weapon.
 // Future logic:
 // - apply damage bonus
@@ -8,29 +8,26 @@
 
 #include "Weapon.h"
 #include <iostream>
-#include <utility>
 
 Weapon::Weapon(std::string n, std::string desc, int p, int dmg, WeaponClass wClass)
     : Item(std::move(n), std::move(desc), p), damage(dmg), reqClass(wClass) {
 }
 
-ItemType Weapon::getType() const {
-    return ItemType::Weapon;
-}
+ItemType Weapon::getType() const { return ItemType::Weapon; }
+int Weapon::getDamage() const { return damage; }
+WeaponClass Weapon::getRequiredClass() const { return reqClass; }
 
-int Weapon::getDamage() const {
-    return damage;
-}
-
-WeaponClass Weapon::getRequiredClass() const {
-    return reqClass;
+void Weapon::upgradeWeapon(int damageBonus, int priceIncrease) {
+    upgradeLevel++;
+    damage += damageBonus;
+    addPrice(priceIncrease);
 }
 
 void Weapon::use(bool& shouldDestroy) {
     shouldDestroy = false;
-
-    std::cout << "⚔️ [WEAPON] Equipped " << getName() << " (+" << damage << " Damage)\n";
-    std::cout << "[LOG]: Weapon equipped. Ready for stat recalculation.\n";
+    std::cout << "[WEAPON] Equipped " << getName();
+    if (upgradeLevel > 0) std::cout << " +" << upgradeLevel;
+    std::cout << " (Weapon damage: +" << damage << ")\n";
 }
 
 std::unique_ptr<Item> Weapon::clone() const {

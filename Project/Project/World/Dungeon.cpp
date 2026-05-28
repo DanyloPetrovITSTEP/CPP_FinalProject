@@ -1,4 +1,4 @@
-#include "Dungeon.h"
+﻿#include "Dungeon.h"
 #include <iostream>
 #include <string>
 #include <vector>
@@ -45,6 +45,21 @@ void Dungeon::StartDungeonBattle(Character& player, Inventory& inventory)
 
         Battle battle(player, bossesPtrs, inventory, logger);
         battle.StartBattle();
+
+        if (player.isAlive())
+        {
+            int reward = 0;
+
+            for (Enemy& boss : bosses)
+            {
+                reward += boss.getGold();
+            }
+
+            player.addGold(reward);
+
+            cout << "Dungeon cleared! You received " << reward << " gold.\n";
+            logger.log("Player cleared dungeon and received " + to_string(reward) + " gold.");
+        }
     }
     else
         cout << "Returning to dungeon menu...\n";
@@ -74,6 +89,12 @@ void Dungeon::showMenu(Character& player_, Inventory& inventory_)
             Dungeon GoblinsCave("Goblin's Cave", { GoblinKing }, 1, logger);
 
             GoblinsCave.StartDungeonBattle(player_, inventory_);
+
+            if (!player_.isAlive())
+            {
+                return;
+            }
+
             break;
         }
         case 2: {
@@ -81,6 +102,12 @@ void Dungeon::showMenu(Character& player_, Inventory& inventory_)
             Dungeon SkeletonsTemple("Skeleton's Temple", { GiantSkeleton }, 2, logger);
 
             SkeletonsTemple.StartDungeonBattle(player_, inventory_);
+
+            if (!player_.isAlive())
+            {
+                return;
+            }
+
             break;
         }
         case 3: {
@@ -88,6 +115,12 @@ void Dungeon::showMenu(Character& player_, Inventory& inventory_)
             Dungeon FrozenMountain("Frozen Mountain", { Yety }, 3, logger);
 
             FrozenMountain.StartDungeonBattle(player_, inventory_);
+
+            if (!player_.isAlive())
+            {
+                return;
+            }
+
             break;
         }
         case 4: {
@@ -96,6 +129,12 @@ void Dungeon::showMenu(Character& player_, Inventory& inventory_)
             Dungeon FireMines("Fire Mines", { MineDemon, AshGolem }, 4, logger);
 
             FireMines.StartDungeonBattle(player_, inventory_);
+
+            if (!player_.isAlive())
+            {
+                return;
+            }
+
             break;
         }
         case 5: {
@@ -104,6 +143,12 @@ void Dungeon::showMenu(Character& player_, Inventory& inventory_)
             Dungeon ForgottenForest("Forgotten Forest", { RotWolf, ForestGhost }, 5, logger);
 
             ForgottenForest.StartDungeonBattle(player_, inventory_);
+
+            if (!player_.isAlive())
+            {
+                return;
+            }
+
             break;
         }
         case 6: {
@@ -112,6 +157,12 @@ void Dungeon::showMenu(Character& player_, Inventory& inventory_)
             Dungeon StormRuins("Storm Ruins", { ThunderWraith, WindElemental }, 6, logger);
 
             StormRuins.StartDungeonBattle(player_, inventory_);
+
+            if (!player_.isAlive())
+            {
+                return;
+            }
+
             break;
         }
         case 7: {
@@ -123,5 +174,5 @@ void Dungeon::showMenu(Character& player_, Inventory& inventory_)
         default:
             cout << "\nInvalid choice!\n";
         }
-    } while (choice != 7);
+    } while (choice != 7 && player_.isAlive());
 }

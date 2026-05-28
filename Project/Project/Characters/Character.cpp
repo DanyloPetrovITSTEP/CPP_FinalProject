@@ -1,7 +1,6 @@
 ﻿#include "Character.h"
 
-Character::Character(const string& name, int max_health, int damage, int gold)
-    : name_(name), health_(max_health), max_health_(max_health), damage_(damage), gold_(gold), first_ability_cooldown_(0), second_ability_cooldown_(0), burn_damage_(0), burn_rounds_(0), damage_multiplier_(1.0), damage_multiplier_rounds_(0)
+Character::Character(const string& name, int max_health, int damage, int gold) : name_(name), health_(max_health), max_health_(max_health), damage_(damage), gold_(gold), weapon_damage_bonus_(0), armor_defense_(0), first_ability_cooldown_(0), second_ability_cooldown_(0), burn_damage_(0), burn_rounds_(0), damage_multiplier_(1.0), damage_multiplier_rounds_(0)
 {
     // Keep starting stats valid
     if (max_health_ < 1)
@@ -38,7 +37,22 @@ int Character::getMaxHealth() const
 
 int Character::getDamage() const
 {
+    return damage_ + weapon_damage_bonus_;
+}
+
+int Character::getBaseDamage() const
+{
     return damage_;
+}
+
+int Character::getWeaponDamageBonus() const
+{
+    return weapon_damage_bonus_;
+}
+
+int Character::getArmorDefense() const
+{
+    return armor_defense_;
 }
 
 int Character::getGold() const
@@ -87,6 +101,16 @@ void Character::takeDamage(int value)
     if (damage_multiplier_rounds_ > 0)
     {
         value = static_cast<int>(value * damage_multiplier_);
+    }
+
+    if (armor_defense_ > 0)
+    {
+        value -= armor_defense_;
+
+        if (value < 1)
+        {
+            value = 1;
+        }
     }
 
     health_ -= value;
@@ -198,6 +222,26 @@ void Character::setDamage(int damage)
     }
 
     damage_ = damage;
+}
+
+void Character::setWeaponDamageBonus(int bonus)
+{
+    if (bonus < 0)
+    {
+        bonus = 0;
+    }
+
+    weapon_damage_bonus_ = bonus;
+}
+
+void Character::setArmorDefense(int defense)
+{
+    if (defense < 0)
+    {
+        defense = 0;
+    }
+
+    armor_defense_ = defense;
 }
 
 void Character::setFirstAbilityCooldown(int cooldown)

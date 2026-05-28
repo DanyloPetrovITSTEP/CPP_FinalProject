@@ -14,6 +14,8 @@ private:
 	int max_health_;
 	int damage_;
 	int gold_;
+	int weapon_damage_bonus_;
+	int armor_defense_;
 
 	// Cooldowns for character two special abilities
 	int first_ability_cooldown_;
@@ -28,7 +30,6 @@ private:
 
 protected:
 	// Protected setters are used by child classes
-	void setDamage(int damage);
 	void setFirstAbilityCooldown(int cooldown);
 	void setSecondAbilityCooldown(int cooldown);
 	void setOtherAbilityCooldown(bool first_ability_was_used);
@@ -44,6 +45,13 @@ public:
 	int getMaxHealth() const;
 	int getDamage() const;
 	int getGold() const;
+	int getBaseDamage() const;
+	int getWeaponDamageBonus() const;
+	int getArmorDefense() const;
+
+	void setDamage(int damage);
+	void setWeaponDamageBonus(int bonus);
+	void setArmorDefense(int defense);
 
 	bool isAlive() const;
 	bool isFullHealth() const;
@@ -56,7 +64,6 @@ public:
 	bool canUseSecondAbility() const;
 
 	// Basic character state changes
-	void takeDamage(int value);
 	void heal(int value);
 	void addGold(int value);
 	bool spendGold(int value);
@@ -77,6 +84,7 @@ public:
 	virtual string getSecondAbilityName() const = 0;
 
 	// Each class has its own actions and abilities
+	virtual void takeDamage(int value);
 	virtual bool basicAttack(Character& target) = 0;
 	virtual bool secondAction(Character& target) = 0;
 	virtual bool firstAbility(Character& target, vector<Character*>& enemies) = 0;

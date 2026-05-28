@@ -1,4 +1,4 @@
-// Potion.cpp
+﻿// Potion.cpp
 // Implementation file for Potion.
 // Future logic:
 // - restore health
@@ -8,23 +8,17 @@
 
 #include "Potion.h"
 #include <iostream>
-#include <utility>
 
 Potion::Potion(std::string n, std::string desc, int p, int heal)
     : Item(std::move(n), std::move(desc), p), healAmount(heal) {
 }
 
-ItemType Potion::getType() const {
-    return ItemType::Potion;
-}
-
-int Potion::getHealAmount() const {
-    return healAmount;
-}
+ItemType Potion::getType() const { return ItemType::Potion; }
+int Potion::getHealAmount() const { return healAmount; }
 
 void Potion::use(bool& shouldDestroy) {
     shouldDestroy = true;
-    std::cout << "🧪 [POTION] Consumed " << getName() << " (Healed +" << healAmount << " HP)\n";
+    std::cout << "[POTION] Used " << getName() << " (Restored +" << healAmount << " HP)\n";
 }
 
 std::unique_ptr<Item> Potion::clone() const {

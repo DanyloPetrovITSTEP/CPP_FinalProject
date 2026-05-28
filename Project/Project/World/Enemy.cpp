@@ -1,4 +1,4 @@
-#include "Enemy.h"
+﻿#include "Enemy.h"
 #include <iostream>
 
 using namespace std;
@@ -23,10 +23,10 @@ void Enemy::takeDamage(int value) {
 }
 
 void Enemy::updateIsDead() {
-    this->is_dead_ = !isAlive();
-    if (is_dead_) {
-        cout << this->ename_ << " has died!" << endl;
-		logger_.log(this->ename_ + " has died.");
+    if (!is_dead_ && !isAlive()) {
+        is_dead_ = true;
+        cout << ename_ << " has died!" << endl;
+        logger_.log(ename_ + " has died!");
     }
 }
 
@@ -37,9 +37,9 @@ bool Enemy::basicAttack(Character& target) {
 
 string Enemy::getClassName() const { return "Enemy"; }
 string Enemy::getBasicAttackName() const { return "Strike"; }
-string Enemy::getSecondActionName() const { return ; }
-string Enemy::getFirstAbilityName() const { return ; }
-string Enemy::getSecondAbilityName() const { return ; }
+string Enemy::getSecondActionName() const { return ""; }
+string Enemy::getFirstAbilityName() const { return ""; }
+string Enemy::getSecondAbilityName() const { return ""; }
 bool Enemy::secondAction(Character&) { return false; }
 bool Enemy::firstAbility(Character&, vector<Character*>&) { return false; }
 bool Enemy::secondAbility(Character&, vector<Character*>&) { return false; }

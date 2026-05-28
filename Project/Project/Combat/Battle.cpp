@@ -1,4 +1,5 @@
-#include "Battle.h"
+﻿#include "Battle.h"
+#include "../Items/Potion.h"
 #include <iostream>
 
 using namespace std;
@@ -19,9 +20,22 @@ void Battle::EnemyTurn()
         if (!enemy->isAlive())
             continue;
 
+        enemy->processStatusEffects();
+
+        if (!enemy->isAlive())
+        {
+            continue;
+        }
+
         enemy->basicAttack(player_);
         cout << enemy->getName() << " attacked player !\n";
         logger_.log(enemy->getName() + " attacked " + player_.getName() + "!");
+
+        if (!player_.isAlive())
+        {
+            IsBattleOver();
+            return;
+        }
     }
 }
 void Battle::ShowEnemies()
@@ -47,23 +61,39 @@ void Battle::ShowStats()
             cout << enemy->getName() << " (Defeated)" << endl;
     }
 }
-void Battle::ProcessPlayerAction(function<void(Character&)> action)
+bool Battle::ProcessPlayerAction(function<bool(Character&)> action)
 {
     Character* target = nullptr;
+
     while (!target)
     {
         target = ChooseTarget();
+
         if (!target)
+        {
             cout << "Try again!\n";
+        }
     }
-    action(*target);
+
+    bool action_success = action(*target);
+
+    if (!action_success)
+    {
+        return false;
+    }
+
+    player_.reduceCooldowns();
+    player_.processStatusEffects();
 
     if (IsBattleOver())
-        return;
+    {
+        return true;
+    }
 
     EnemyTurn();
 
     IsBattleOver();
+    return true;
 }
 bool Battle::IsBattleOver()
 {
@@ -78,15 +108,25 @@ bool Battle::IsBattleOver()
     }
     if (!player_.isAlive())
     {
-        cout << "You lost!\n";
-        logger_.log(player_.getName() + " lost the battle.");
+        if (!battle_result_printed_)
+        {
+            cout << "You lost!\n";
+            logger_.log(player_.getName() + " lost the battle.");
+            battle_result_printed_ = true;
+        }
+
         return true;
     }
 
     if (!enemiesAlive)
     {
-        cout << "You won the battle!\n";
-        logger_.log(player_.getName() + " won the battle!");
+        if (!battle_result_printed_)
+        {
+            cout << "You won the battle!\n";
+            logger_.log(player_.getName() + " won the battle!");
+            battle_result_printed_ = true;
+        }
+
         return true;
     }
     return false;
@@ -156,77 +196,124 @@ void Battle::StartBattle()
         case 1:
         {
             ProcessPlayerAction([&](Character& enemy)
-                {
-                    player_.basicAttack(enemy);
-                    logger_.log(player_.getName() + " used " + player_.getBasicAttackName() + " on " + enemy.getName() + "!");
-                }
-            );
+            {
+                logger_.log(player_.getName() + " used " + player_.getBasicAttackName() + " on " + enemy.getName() + "!");
+                return player_.basicAttack(enemy);
+            });
             break;
         }
         case 2:
         {
-            ProcessPlayerAction([&](Character& enemy)
+            if (player_.getClassName() == "Mage")
+            {
+                logger_.log(player_.getName() + " used " + player_.getSecondActionName() + "!");
+
+                if (player_.secondAction(player_))
                 {
-                    player_.secondAction(enemy);
-                    logger_.log(player_.getName() + " used " + player_.getSecondActionName() + " on " + enemy.getName() + "!");
+                    player_.reduceCooldowns();
+                    player_.processStatusEffects();
+
+                    if (!IsBattleOver())
+                    {
+                        EnemyTurn();
+                    }
+
+                    IsBattleOver();
                 }
-            );
+            }
+            else
+            {
+                ProcessPlayerAction([&](Character& enemy)
+                    {
+                        logger_.log(player_.getName() + " used " + player_.getSecondActionName() + " on " + enemy.getName() + "!");
+                        return player_.secondAction(enemy);
+                    });
+            }
+
             break;
         }
         case 3:
         {
             ProcessPlayerAction([&](Character& enemy)
+            {
+                if (!player_.firstAbility(enemy, enemies_))
                 {
-                    if (player_.firstAbility(enemy, enemies_))
-                        logger_.log(player_.getName() + " used " + player_.getFirstAbilityName() + " on " + enemy.getName() + "!");
-                    else
-                        cout << "Cannot use ability!" << endl;
+                    cout << "Cannot use ability!" << endl;
+                    return false;
                 }
-            );
+
+                logger_.log(player_.getName() + " used " + player_.getFirstAbilityName() + " on " + enemy.getName() + "!");
+                return true;
+            });
             break;
         }
         case 4:
         {
             ProcessPlayerAction([&](Character& enemy)
+            {
+                if (!player_.secondAbility(enemy, enemies_))
                 {
-                    if (player_.secondAbility(enemy, enemies_))
-                        logger_.log(player_.getName() + " used " + player_.getSecondAbilityName() + " on " + enemy.getName() + "!");
-                    else
-                        cout << "Cannot use ability!" << endl;
+                    cout << "Cannot use ability!" << endl;
+                    return false;
                 }
-            );
+
+                logger_.log(player_.getName() + " used " + player_.getSecondAbilityName() + " on " + enemy.getName() + "!");
+                return true;
+            });
             break;
         }
         case 5:
         {
             cout << "\n----- INVENTORY -----" << endl;
-            if (inventory_.isEmpty()) {
+
+            if (inventory_.isEmpty())
+            {
                 cout << "Your inventory is empty!" << endl;
                 break;
             }
+
             inventory_.showItems();
+
             int inv_choice;
             cout << "Choose item to use (0 to cancel): ";
             cin >> inv_choice;
-            if (inv_choice > 0 && inv_choice <= inventory_.getSize()) {
-                inventory_.useItem(inv_choice - 1);
-                logger_.log(player_.getName() + " used " + inventory_.getItemPtr(inv_choice - 1)->getName() + " during battle.");
-            }
 
-            else if (inv_choice != 0) {
+            if (inv_choice > 0 && inv_choice <= inventory_.getSize())
+            {
+                Item* used_item = inventory_.getItemPtr(inv_choice - 1);
+                string item_name = used_item ? used_item->getName() : "unknown item";
+
+                if (used_item && used_item->getType() != ItemType::Potion)
+                {
+                    cout << "You can equip weapons and armor only outside battle.\n";
+                    break;
+                }
+
+                if (Potion* potion = dynamic_cast<Potion*>(used_item))
+                {
+                    player_.heal(potion->getHealAmount());
+                }
+
+                inventory_.useItem(inv_choice - 1);
+
+                logger_.log(player_.getName() + " used " + item_name + " during battle.");
+
+                EnemyTurn();
+
+                break;
+            }
+            else if (inv_choice != 0)
+            {
                 cout << "Invalid item choice!" << endl;
                 logger_.log(player_.getName() + " made an invalid item choice during battle.");
+                break;
             }
-
-            else if (inv_choice == 0) {
+            else
+            {
                 cout << "Cancelled item use." << endl;
                 logger_.log(player_.getName() + " cancelled item use during battle.");
                 break;
             }
-
-            EnemyTurn();
-
-            break;
         }
         case 6:
         {

@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include <string>
 #include "../Core/Logger.h"
 #include "../Characters/Character.h"
@@ -8,10 +8,6 @@
 class Enemy : public Character {
 private:
     string ename_;
-    int health_;
-    int maxHealth_;
-    int damage_;
-    int gold_;
     bool is_dead_;
     Logger& logger_;
 
@@ -23,8 +19,7 @@ public:
     int getDamage() const;
     int getGold() const;
     void updateIsDead();
-    void takeDamage(int value);
-    bool basicAttack(Character& target) override;
+    void takeDamage(int value) override;
     bool isAlive() const;
 
 

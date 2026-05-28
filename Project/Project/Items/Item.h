@@ -1,4 +1,4 @@
-// Item.h
+﻿// Item.h
 // Base abstract item class.
 // Responsible for common item data.
 //
@@ -19,29 +19,24 @@
 #include <string>
 #include <memory>
 
-enum class ItemType {
-    Potion,
-    Weapon,
-    Armor
-};
+enum class ItemType { Potion, Weapon, Armor };
 
 class Item {
 private:
     std::string name;
     std::string description;
     int price;
-
 protected:
+    int upgradeLevel{ 0 };
     Item(std::string n, std::string desc, int p);
-
+    void addPrice(int amount);
 public:
     virtual ~Item() = default;
-
-    std::string getName() const;
-    std::string getDescription() const;
-    int getPrice() const;
-
-    virtual ItemType getType() const = 0;
+    [[nodiscard]] std::string getName() const;
+    [[nodiscard]] std::string getDescription() const;
+    [[nodiscard]] int getPrice() const;
+    [[nodiscard]] int getUpgradeLevel() const;
+    [[nodiscard]] virtual ItemType getType() const = 0;
     virtual void use(bool& shouldDestroy) = 0;
-    virtual std::unique_ptr<Item> clone() const = 0;
+    [[nodiscard]] virtual std::unique_ptr<Item> clone() const = 0;
 };

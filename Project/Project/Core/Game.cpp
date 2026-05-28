@@ -1,4 +1,4 @@
-#include "Game.h"
+﻿#include "Game.h"
 #include "Exceptions.h"
 
 #include "../Characters/Character.h"
@@ -8,9 +8,38 @@
 #include "../Characters/Rogue.h"
 #include "../World/Dungeon.h"
 #include "../World/Shop.h"
+#include "../Items/Potion.h"
 
 #include <iostream>
 #include <ctime>
+
+bool CanEquipWeapon(const Character& player, const Weapon& weapon)
+{
+    std::string className = player.getClassName();
+    WeaponClass requiredClass = weapon.getRequiredClass();
+
+    if (className == "Warrior" && requiredClass == WeaponClass::Warrior)
+    {
+        return true;
+    }
+
+    if (className == "Archer" && requiredClass == WeaponClass::Archer)
+    {
+        return true;
+    }
+
+    if (className == "Mage" && requiredClass == WeaponClass::Mage)
+    {
+        return true;
+    }
+
+    if (className == "Rogue" && requiredClass == WeaponClass::Thief)
+    {
+        return true;
+    }
+
+    return false;
+}
 
 Game::Game() 
     : m_isRunning(true), 
@@ -27,7 +56,7 @@ void Game::run() {
         if (!m_player) {
             showMainMenu();
         } else if (!m_player->isAlive()) {
-            std::cout << "\n💀 [GAME OVER] " << m_player->getName() << " has been killed!\n";
+            std::cout << "\n[GAME OVER] " << m_player->getName() << " has been killed!\n";
             m_logger.log("Player character died: " + m_player->getName());
             m_player.reset(); 
         } else {
@@ -37,7 +66,7 @@ void Game::run() {
 }
 
 void Game::showMainMenu() {
-    std::cout << "\n=== RPG TEXT ENGINE ===\n"
+    std::cout << "\n=== MEDIEVAL HEROES | CONSOLE EDITION ===\n"
               << "1. Start New Journey\n"
               << "2. Load Saved Progression\n"
               << "3. Display Engine Logs\n"
@@ -63,7 +92,7 @@ void Game::showMainMenu() {
 void Game::showGameMenu() {
     std::cout << "\n=== HERO PROFILE: " << m_player->getName() << " (" << m_player->getClassName() << ") ===\n"
               << "HP: " << m_player->getHealth() << "/" << m_player->getMaxHealth() << "\n"
-              << "Base Damage: " << m_player->getDamage() << "\n"
+              << "Damage: " << m_player->getDamage() << "\n"
               << "Current Wealth: " << m_player->getGold() << " Gold\n"
               << "Active Weapon: " << (m_equippedWeapon ? m_equippedWeapon->getName() : "Bare Hands") << "\n"
               << "Active Armor: " << (m_equippedArmor ? m_equippedArmor->getName() : "None") << "\n"
@@ -107,12 +136,26 @@ void Game::showGameMenu() {
 }
 
 void Game::startNewGame() {
+    m_inventory.clear();
+    m_equippedWeapon = nullptr;
+    m_equippedArmor = nullptr;
+
     selectCharacterClass();
 }
 
 void Game::continueGame() {
     try {
-        m_player = m_saveSystem.loadGame();
+        m_player = m_saveSystem.loadGame(m_inventory, m_equippedWeapon, m_equippedArmor);
+
+        if (m_equippedWeapon)
+        {
+            m_player->setWeaponDamageBonus(m_equippedWeapon->getDamage());
+        }
+
+        if (m_equippedArmor)
+        {
+            m_player->setArmorDefense(m_equippedArmor->getDefense());
+        }
     } catch (const SaveLoadException& ex) {
         std::cout << "\n[I/O Failure Intercepted]: " << ex.what() << "\n";
     }
@@ -164,6 +207,12 @@ void Game::goToShop() {
                 std::cout << "Enter item index code to buy: ";
                 size_t buyIdx; std::cin >> buyIdx;
                 int currentGold = m_player->getGold();
+
+                if (buyIdx == 0)
+                {
+                    std::cout << "Invalid item index.\n";
+                    continue;
+                }
                 
                 marketplace.buyItem(buyIdx - 1, m_inventory, currentGold);
                 
@@ -177,6 +226,13 @@ void Game::goToShop() {
                     std::cout << "Enter index item to liquidate: ";
                     size_t sellIdx; std::cin >> sellIdx;
                     int currentGold = m_player->getGold();
+
+                    if (sellIdx == 0)
+                    {
+                        std::cout << "Invalid item index.\n";
+                        continue;
+                    }
+
                     marketplace.sellItem(sellIdx - 1, m_inventory, currentGold);
                     m_player->addGold(currentGold - m_player->getGold()); 
                     m_logger.log("Item sold to merchant.");
@@ -184,7 +240,43 @@ void Game::goToShop() {
             } 
             else if (actionIndex == 3) {
                 m_inventory.showItems();
-            } 
+
+                if (!m_inventory.isEmpty()) {
+                    std::cout << "Enter item index to use/equip (0 to cancel): ";
+                    size_t itemIndex;
+                    std::cin >> itemIndex;
+
+                    if (itemIndex > 0 && itemIndex <= m_inventory.getSize()) {
+                        Item* item = m_inventory.getItemPtr(itemIndex - 1);
+
+                        if (Weapon* weapon = dynamic_cast<Weapon*>(item))
+                        {
+                            if (!CanEquipWeapon(*m_player, *weapon))
+                            {
+                                std::cout << "This character cannot equip this weapon.\n";
+                                continue;
+                            }
+                        }
+
+                        if (Potion* potion = dynamic_cast<Potion*>(item))
+                        {
+                            m_player->heal(potion->getHealAmount());
+                        }
+
+                        m_inventory.useItem(itemIndex - 1, m_equippedWeapon, m_equippedArmor);
+
+                        if (m_equippedWeapon)
+                        {
+                            m_player->setWeaponDamageBonus(m_equippedWeapon->getDamage());
+                        }
+
+                        if (m_equippedArmor)
+                        {
+                            m_player->setArmorDefense(m_equippedArmor->getDefense());
+                        }
+                    }
+                }
+            }
             else {
                 menuActive = false;
             }
@@ -197,10 +289,10 @@ void Game::goToShop() {
 
 void Game::restAtHome() {
     m_logger.log("Character completed rest tick action.");
-    std::cout << "\n🛏️ You rest. Health systems refreshed.\n";
+    std::cout << "\nYou rest. Health systems refreshed.\n";
     m_player->heal(25);
 }
 
 void Game::saveGame() {
-    m_saveSystem.saveGame(m_player);
+    m_saveSystem.saveGame(m_player, m_inventory, m_equippedWeapon, m_equippedArmor);
 }

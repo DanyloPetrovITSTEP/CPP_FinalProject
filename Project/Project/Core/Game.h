@@ -1,4 +1,4 @@
-#ifndef GAME_H
+﻿#ifndef GAME_H
 #define GAME_H
 
 #include <memory>
@@ -7,8 +7,7 @@
 #include "../Items/Inventory.h"
 #include "../Items/Weapon.h"
 #include "../Items/Armor.h"
-
-class Character; 
+#include "../Characters/Character.h"
 
 class Game {
 private:

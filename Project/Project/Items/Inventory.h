@@ -1,4 +1,4 @@
-// Inventory.h
+﻿// Inventory.h
 // Player inventory class.
 // Responsible for storing and using items.
 //
@@ -11,30 +11,30 @@
 // - useItem()
 // - removeItem()
 // - isEmpty()
+
 #pragma once
 #include <vector>
 #include <memory>
-#include "../Items/Item.h"
+#include "Item.h"
+#include "Weapon.h"
+#include "Armor.h"
 
 // Player inventory class.
 // Responsible for storing and using items.
+
 class Inventory {
 private:
-    // Suggested storage:
     std::vector<std::unique_ptr<Item>> slots;
-
 public:
     Inventory() = default;
-
-    // Methods required by structural comments:
     void addItem(std::unique_ptr<Item> item);
     void showItems() const;
+    void useItem(size_t index, std::shared_ptr<Weapon>& eqW, std::shared_ptr<Armor>& eqA);
     void useItem(size_t index);
-    void removeItem(size_t index);
-    bool isEmpty() const;
-
-    // Helper methods for Shop interaction:
-    size_t getSize() const { return slots.size(); }
-    Item* getItemPtr(size_t index) { return slots[index].get(); }
+    [[nodiscard]] bool isEmpty() const;
+    [[nodiscard]] size_t getSize() const;
+    [[nodiscard]] Item* getItemPtr(size_t index);
     std::unique_ptr<Item> extractItem(size_t index);
+    const std::vector<std::unique_ptr<Item>>& getItems() const;
+    void clear();
 };
