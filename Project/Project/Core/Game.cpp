@@ -156,7 +156,10 @@ void Game::continueGame() {
         {
             m_player->setArmorDefense(m_equippedArmor->getDefense());
         }
-    } catch (const SaveLoadException& ex) {
+
+        std::cout << "\nGame loaded successfully!\n";
+    }
+    catch (const SaveLoadException& ex) {
         std::cout << "\n[I/O Failure Intercepted]: " << ex.what() << "\n";
     }
 }
@@ -197,8 +200,8 @@ void Game::goToShop() {
     int menuActive = true;
     while (menuActive) {
         marketplace.showAssortment();
-        std::cout << "Current Balance: " << m_player->getGold() << " Gold\n";
-        std::cout << "1. Purchase Item\n2. Sell Item from Inventory\n3. Show Inventory\n4. Leave Merchant\nChoice: ";
+        std::cout << "\nCurrent Balance: " << m_player->getGold() << " Gold\n";
+        std::cout << "\n1. Purchase Item\n2. Sell Item from Inventory\n3. Show Inventory\n4. Leave Merchant\nChoice: ";
         int actionIndex;
         std::cin >> actionIndex;
 
@@ -215,9 +218,11 @@ void Game::goToShop() {
                 }
                 
                 marketplace.buyItem(buyIdx - 1, m_inventory, currentGold);
-                
+
                 int goldSpent = m_player->getGold() - currentGold;
                 m_player->spendGold(goldSpent);
+
+                std::cout << "Gold left: " << m_player->getGold() << "\n";
                 m_logger.log("Item successfully bought by " + m_player->getName());
             } 
             else if (actionIndex == 2) {
@@ -295,4 +300,6 @@ void Game::restAtHome() {
 
 void Game::saveGame() {
     m_saveSystem.saveGame(m_player, m_inventory, m_equippedWeapon, m_equippedArmor);
+    std::cout << "\nGame saved successfully!\n";
+    m_logger.log("Game saved successfully.");
 }

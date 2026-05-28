@@ -27,7 +27,7 @@ void Armor::upgradeArmor(int defenseBonus, int priceIncrease) {
 
 void Armor::use(bool& shouldDestroy) {
     shouldDestroy = false;
-    std::cout << "[ARMOR] Equipped " << getName();
+    std::cout << "\n[ARMOR] Equipped " << getName();
     if (upgradeLevel > 0) std::cout << " +" << upgradeLevel;
     std::cout << " (Total defense: " << defense << ")\n";
 }

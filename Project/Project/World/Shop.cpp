@@ -39,7 +39,7 @@ void Shop::buyItem(size_t idx, Inventory& inv, int& gold) {
     if (gold < cost) throw InsufficientGoldException();
     gold -= cost;
     inv.addItem(showcase[idx]->clone());
-    std::cout << "Bought " << showcase[idx]->getName() << " for " << cost << " gold.\n";
+    std::cout << "\nBought " << showcase[idx]->getName() << " for " << cost << " gold.\n";
 }
 
 void Shop::sellItem(size_t idx, Inventory& inv, int& gold) {
@@ -47,5 +47,5 @@ void Shop::sellItem(size_t idx, Inventory& inv, int& gold) {
     if (!item) return;
     int price = item->getPrice() / 2;
     gold += price;
-    std::cout << "Sold " << item->getName() << " for " << price << " gold.\n";
+    std::cout << "\nSold " << item->getName() << " for " << price << " gold.\n";
 }

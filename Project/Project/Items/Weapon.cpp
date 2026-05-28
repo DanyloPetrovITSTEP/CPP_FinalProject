@@ -25,7 +25,7 @@ void Weapon::upgradeWeapon(int damageBonus, int priceIncrease) {
 
 void Weapon::use(bool& shouldDestroy) {
     shouldDestroy = false;
-    std::cout << "[WEAPON] Equipped " << getName();
+    std::cout << "\n[WEAPON] Equipped " << getName();
     if (upgradeLevel > 0) std::cout << " +" << upgradeLevel;
     std::cout << " (Weapon damage: +" << damage << ")\n";
 }

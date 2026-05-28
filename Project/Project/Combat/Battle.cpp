@@ -28,7 +28,7 @@ void Battle::EnemyTurn()
         }
 
         enemy->basicAttack(player_);
-        cout << enemy->getName() << " attacked player !\n";
+        cout << enemy->getName() << " attacked " << player_.getName() << "!\n";
         logger_.log(enemy->getName() + " attacked " + player_.getName() + "!");
 
         if (!player_.isAlive())
@@ -110,7 +110,7 @@ bool Battle::IsBattleOver()
     {
         if (!battle_result_printed_)
         {
-            cout << "You lost!\n";
+            cout << "\nYou lost!\n";
             logger_.log(player_.getName() + " lost the battle.");
             battle_result_printed_ = true;
         }
@@ -122,7 +122,7 @@ bool Battle::IsBattleOver()
     {
         if (!battle_result_printed_)
         {
-            cout << "You won the battle!\n";
+            cout << "\nYou won the battle!\n";
             logger_.log(player_.getName() + " won the battle!");
             battle_result_printed_ = true;
         }
@@ -296,9 +296,9 @@ void Battle::StartBattle()
 
                 inventory_.useItem(inv_choice - 1);
 
-                logger_.log(player_.getName() + " used " + item_name + " during battle.");
+                cout << "Current HP: " << player_.getHealth() << "/" << player_.getMaxHealth() << "\n";
 
-                EnemyTurn();
+                logger_.log(player_.getName() + " used " + item_name + " during battle.");
 
                 break;
             }

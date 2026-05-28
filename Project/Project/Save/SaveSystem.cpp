@@ -113,11 +113,20 @@ std::unique_ptr<Character> SaveSystem::loadGame(Inventory& inventory, std::share
 
     if (loadedPlayer) {
         loadedPlayer->setDamage(damage);
+
         int hitDiff = loadedPlayer->getMaxHealth() - health;
         if (hitDiff > 0) {
             loadedPlayer->takeDamage(hitDiff);
         }
-        loadedPlayer->addGold(gold - loadedPlayer->getGold());
+
+        int currentGold = loadedPlayer->getGold();
+
+        if (gold > currentGold) {
+            loadedPlayer->addGold(gold - currentGold);
+        }
+        else if (gold < currentGold) {
+            loadedPlayer->spendGold(currentGold - gold);
+        }
     }
 
     size_t itemCount = 0;

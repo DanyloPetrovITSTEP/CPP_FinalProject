@@ -18,7 +18,7 @@ int Potion::getHealAmount() const { return healAmount; }
 
 void Potion::use(bool& shouldDestroy) {
     shouldDestroy = true;
-    std::cout << "[POTION] Used " << getName() << " (Restored +" << healAmount << " HP)\n";
+    std::cout << "\n[POTION] Used " << getName() << " (Restored +" << healAmount << " HP)\n";
 }
 
 std::unique_ptr<Item> Potion::clone() const {

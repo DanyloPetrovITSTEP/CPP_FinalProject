@@ -12,7 +12,7 @@ Dungeon::Dungeon(string dName, vector<Enemy> bosses, int lvl, Logger& logger)
 
 void Dungeon::showInfo()
 {
-    cout << "Name: " << dungeonName << "\n";
+    cout << "\nName: " << dungeonName << "\n";
     cout << "Bosses: ";
 
     for (size_t i = 0; i < bosses.size(); i++)
@@ -57,7 +57,8 @@ void Dungeon::StartDungeonBattle(Character& player, Inventory& inventory)
 
             player.addGold(reward);
 
-            cout << "Dungeon cleared! You received " << reward << " gold.\n";
+            cout << "\nDungeon cleared!\n";
+            cout << "You received " << reward << " gold.\n";
             logger.log("Player cleared dungeon and received " + to_string(reward) + " gold.");
         }
     }
