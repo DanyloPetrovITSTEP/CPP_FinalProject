@@ -1,4 +1,5 @@
-#pragma once
+#ifndef EXCEPTIONS_H
+#define EXCEPTIONS_H
 
 #include <stdexcept>
 #include <string>
@@ -6,15 +7,21 @@
 class GameException : public std::runtime_error {
 public:
     explicit GameException(const std::string& message) : std::runtime_error(message) {}
-    virtual ~GameException() = default;
 };
 
-class SaveLoadException final : public GameException {
+class SaveLoadException : public GameException {
 public:
-    explicit SaveLoadException(const std::string& message) : GameException("Save/Load Subsystem Error: " + message) {}
+    explicit SaveLoadException(const std::string& message) : GameException("Save/Load Error: " + message) {}
 };
 
-class InvalidMenuChoiceException final : public GameException {
+class InventoryException : public GameException {
 public:
-    explicit InvalidMenuChoiceException(const std::string& message) : GameException("UI/Menu Error: " + message) {}
+    explicit InventoryException(const std::string& message) : GameException("Inventory operational error: " + message) {}
 };
+
+class ShopException : public GameException {
+public:
+    explicit ShopException(const std::string& message) : GameException("Shop Transaction Error: " + message) {}
+};
+
+#endif 

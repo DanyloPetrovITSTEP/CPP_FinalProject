@@ -1,36 +1,27 @@
 #include "Logger.h"
 #include <iostream>
-#include <algorithm>
-#include <iterator>
 
-Logger& Logger::getInstance() noexcept {
-    static Logger instance;
-    return instance;
-}
-
-void Logger::log(const std::string& message) {
-    history_.emplace_back("[INFO] " + message);
-}
-
-void Logger::logError(const std::string& message) {
-    history_.emplace_back("[ERROR] " + message);
+void Logger::log(std::string_view message) {
+    m_history.emplace_back(message);
 }
 
 void Logger::print() const {
-    std::cout << "\n=== SYSTEM EVENT HISTORY ===" << std::endl;
-    if (history_.empty()) {
-        std::cout << "[Log history is completely empty]" << std::endl;
+    std::cout << "\n--- GAME LOG HISTORY ---\n";
+    if (m_history.empty()) {
+        std::cout << "[Log is empty]\n";
         return;
     }
-
-    std::copy(history_.cbegin(), history_.cend(), std::ostream_iterator<std::string>(std::cout, "\n"));
-    std::cout << "============================" << std::endl;
+    
+    for (auto it = m_history.cbegin(); it != m_history.cend(); ++it) {
+        std::cout << *it << "\n";
+    }
+    std::cout << "------------------------\n";
 }
 
-void Logger::clear() noexcept {
-    history_.clear();
+void Logger::clear() {
+    m_history.clear();
 }
 
-const std::list<std::string>& Logger::getHistory() const noexcept {
-    return history_;
+const std::vector<std::string>& Logger::getHistory() const {
+    return m_history;
 }

@@ -1,55 +1,70 @@
 #include "SaveSystem.h"
 #include "../Core/Exceptions.h"
-#include "../Core/Logger.h"
+#include "../Characters/Character.h"
+#include "../Characters/Warrior.h"
+#include "../Characters/Archer.h"
+#include "../Characters/Mage.h"
+#include "../Characters/Rogue.h"
 #include <fstream>
 
-void SaveSystem::saveGame(const std::string& filename, const Character& player) {
-    std::ofstream out(filename);
-    if (!out.is_open()) {
-        throw SaveLoadException("Critical: Unable to open file for writing serialization data: " + filename);
+SaveSystem::SaveSystem(std::string saveFileName) 
+    : m_saveFileName(std::move(saveFileName)) {}
+
+void SaveSystem::saveGame(const std::unique_ptr<Character>& player) {
+    if (!player) {
+        throw SaveLoadException("Abort operations: Attempting to serialize a null object state reference.");
     }
 
-    out << player.getClassName() << "\n";
-    out << player.getName() << "\n";
-    out << player.getHealth() << "\n";
-    out << player.getMaxHealth() << "\n";
-    out << player.getDamage() << "\n";
-    out << player.getGold() << "\n";
-    out << 0 << "\n"; 
+    std::ofstream outFile(m_saveFileName);
+    if (!outFile.is_open()) {
+        throw SaveLoadException("I/O File creation lock failed for filename path: " + m_saveFileName);
+    }
 
-    Logger::getInstance().log("Save state written successfully to target file: " + filename);
+    outFile << player->getClassName() << "\n";
+    outFile << player->getName() << "\n";
+    outFile << player->getHealth() << "\n";
+    outFile << player->getDamage() << "\n";
+    outFile << player->getGold() << "\n";
 }
 
-std::unique_ptr<Character> SaveSystem::loadGame(const std::string& filename, CharacterFactory& factory) {
-    std::ifstream in(filename);
-    if (!in.is_open()) {
-        throw SaveLoadException("Critical: Target save state file does not exist: " + filename);
+std::unique_ptr<Character> SaveSystem::loadGame() {
+    std::ifstream inFile(m_saveFileName);
+    if (!inFile.is_open()) {
+        throw SaveLoadException("Read target channel missing: Save tracking record file does not exist.");
     }
 
-    std::string class_name, name;
-    int health = 0, max_health = 0, damage = 0, gold = 0;
+    std::string className;
+    std::string name;
+    int health = 0;
+    int damage = 0;
+    int gold = 0;
 
-    if (!(in >> class_name >> name >> health >> max_health >> damage >> gold)) {
-        throw SaveLoadException("Data stream failure: Save file structure is corrupted!");
-    }
-    
-    auto loaded_player = factory.createCharacter(class_name, name, health, max_health, damage, gold);
-    
-    if (!loaded_player) {
-        throw SaveLoadException("Factory processing failed: Unknown or unregistered character class token: " + class_name);
+    if (!(inFile >> className >> name >> health >> damage >> gold)) {
+        throw SaveLoadException("Data integrity compromised: file read mismatch or corrupted segments.");
     }
 
-    auto health_to_reduce = max_health - health;
-    if (health_to_reduce > 0) {
-        loaded_player->takeDamage(health_to_reduce);
+    std::unique_ptr<Character> loadedPlayer = nullptr;
+
+    if (className == "Warrior") {
+        loadedPlayer = std::make_unique<Warrior>(name);
+    } else if (className == "Archer") {
+        loadedPlayer = std::make_unique<Archer>(name);
+    } else if (className == "Mage") {
+        loadedPlayer = std::make_unique<Mage>(name);
+    } else if (className == "Rogue") {
+        loadedPlayer = std::make_unique<Rogue>(name);
+    } else {
+        throw SaveLoadException("Polymorphic runtime initialization failed: Class name trace token corrupt.");
     }
 
-    int item_count = 0;
-    if (in >> item_count) {
-        for (int i = 0; i < item_count; ++i) {
+    if (loadedPlayer) {
+        loadedPlayer->setDamage(damage);
+        int hitDiff = loadedPlayer->getMaxHealth() - health;
+        if (hitDiff > 0) {
+            loadedPlayer->takeDamage(hitDiff);
         }
+        loadedPlayer->addGold(gold - loadedPlayer->getGold());
     }
 
-    Logger::getInstance().log("Player session completely reconstructed from save state file.");
-    return loaded_player;
+    return loadedPlayer;
 }

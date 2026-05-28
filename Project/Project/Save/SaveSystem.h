@@ -1,13 +1,21 @@
-#pragma once
+#ifndef SAVESYSTEM_H
+#define SAVESYSTEM_H
 
-#include "../Characters/Character.h"
-#include "../Characters/CharacterFactory.h"
 #include <string>
 #include <memory>
 
-class SaveSystem final {
+class Character;
+
+class SaveSystem {
+private:
+    std::string m_saveFileName;
+
 public:
-    static void saveGame(const std::string& filename, const Character& player);
-    
-    static std::unique_ptr<Character> loadGame(const std::string& filename, CharacterFactory& factory);
+    explicit SaveSystem(std::string saveFileName = "save.dat");
+    ~SaveSystem() = default;
+
+    void saveGame(const std::unique_ptr<Character>& player);
+    std::unique_ptr<Character> loadGame();
 };
+
+#endif 
